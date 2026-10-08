@@ -1,14 +1,27 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:learning_dashboard/core/error/failures.dart';
+import 'package:learning_dashboard/core/error/result.dart';
 import 'package:learning_dashboard/features/courses/domain/entities/course.dart';
 import 'package:learning_dashboard/features/courses/domain/entities/lesson.dart';
+import 'package:learning_dashboard/features/courses/domain/repositories/course_repository.dart';
 import 'package:learning_dashboard/features/courses/domain/usecases/complete_lesson_usecase.dart';
+import 'package:mocktail/mocktail.dart';
+
+class MockCourseRepository extends Mock implements CourseRepository {}
+
+class FakeCourse extends Fake implements Course {}
 
 void main() {
   late CompleteLessonUseCase usecase;
+  late MockCourseRepository mockCourseRepository;
+
+  setUpAll(() {
+    registerFallbackValue(FakeCourse());
+  });
 
   setUp(() {
-    usecase = CompleteLessonUseCase();
+    mockCourseRepository = MockCourseRepository();
+    usecase = CompleteLessonUseCase(mockCourseRepository);
   });
 
   const tLesson1 = Lesson(id: 1, title: 'L1', isCompleted: false);
@@ -25,6 +38,10 @@ void main() {
   test(
     'should return updated course with lesson marked as completed and progress updated',
     () async {
+      when(() => mockCourseRepository.updateCourse(any())).thenAnswer(
+        (inv) async => Success(inv.positionalArguments[0] as Course),
+      );
+
       final result = await usecase.execute(tCourse, 1);
       expect(result.isSuccess, true);
 

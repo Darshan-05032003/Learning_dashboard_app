@@ -33,7 +33,13 @@ class CourseModel extends Course {
       'instructor': instructor,
       'lessons': lessons,
       'lessonItems': lessonItems
-          .map((e) => (e as LessonModel).toJson())
+          .map(
+            (e) => LessonModel(
+              id: e.id,
+              title: e.title,
+              isCompleted: e.isCompleted,
+            ).toJson(),
+          )
           .toList(),
     };
   }

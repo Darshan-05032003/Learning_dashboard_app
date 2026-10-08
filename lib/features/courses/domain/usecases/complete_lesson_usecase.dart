@@ -3,14 +3,15 @@ import '../../../../core/error/result.dart';
 import '../entities/course.dart';
 import '../entities/lesson.dart';
 
+import '../repositories/course_repository.dart';
+
 /// Use case for marking a lesson as completed within a course.
 class CompleteLessonUseCase {
-  /// Executes the completion logic.
-  /// In this phase, it operates purely on the provided domain objects and
-  /// returns a newly updated [Course] instance reflecting the changes.
-  ///
-  /// In a future phase, this use case would interact with a Repository
-  /// to persist the changes to a local database or remote API.
+  final CourseRepository repository;
+
+  CompleteLessonUseCase(this.repository);
+
+  /// Executes the completion logic and persists the changes.
   Future<Result<Course>> execute(Course course, int lessonId) async {
     try {
       final lessonIndex = course.lessonItems.indexWhere(
@@ -38,7 +39,14 @@ class CompleteLessonUseCase {
       // Create new course with updated lessons
       final updatedCourse = course.copyWith(lessonItems: newLessonItems);
 
-      return Success(updatedCourse);
+      // Persist the updated course
+      final saveResult = await repository.updateCourse(updatedCourse);
+
+      if (saveResult.isSuccess) {
+        return Success(updatedCourse);
+      } else {
+        return saveResult;
+      }
     } catch (e) {
       return FailureResult(UnknownFailure(message: e.toString()));
     }

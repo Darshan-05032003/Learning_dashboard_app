@@ -9,6 +9,7 @@ import '../../features/auth/domain/repositories/auth_repository.dart';
 import '../../features/auth/domain/usecases/login_usecase.dart';
 import '../../features/auth/presentation/bloc/auth_bloc.dart';
 
+import '../../features/courses/data/datasources/course_local_data_source.dart';
 import '../../features/courses/data/datasources/course_remote_data_source.dart';
 import '../../features/courses/data/repositories/course_repository_impl.dart';
 import '../../features/courses/domain/repositories/course_repository.dart';
@@ -88,11 +89,20 @@ void _initCoursesDependencies() {
       () => MockCourseRemoteDataSourceImpl(),
     );
   }
+  if (!sl.isRegistered<CourseLocalDataSource>()) {
+    sl.registerLazySingleton<CourseLocalDataSource>(
+      () => CourseLocalDataSourceImpl(localStorage: sl()),
+    );
+  }
 
   // Repositories
   if (!sl.isRegistered<CourseRepository>()) {
     sl.registerLazySingleton<CourseRepository>(
-      () => CourseRepositoryImpl(remoteDataSource: sl(), networkInfo: sl()),
+      () => CourseRepositoryImpl(
+        remoteDataSource: sl(),
+        localDataSource: sl(),
+        networkInfo: sl(),
+      ),
     );
   }
 
@@ -101,7 +111,7 @@ void _initCoursesDependencies() {
     sl.registerLazySingleton(() => GetCoursesUseCase(sl()));
   }
   if (!sl.isRegistered<CompleteLessonUseCase>()) {
-    sl.registerLazySingleton(() => CompleteLessonUseCase());
+    sl.registerLazySingleton(() => CompleteLessonUseCase(sl()));
   }
 
   // BLoC

@@ -5,4 +5,7 @@ import '../entities/course.dart';
 abstract class CourseRepository {
   /// Fetches a list of available courses.
   Future<Result<List<Course>>> getCourses();
+
+  /// Updates a specific course (e.g. for persisting lesson completions)
+  Future<Result<Course>> updateCourse(Course course);
 }
