@@ -12,7 +12,10 @@ import '../../features/auth/presentation/bloc/auth_bloc.dart';
 import '../../features/courses/data/datasources/course_remote_data_source.dart';
 import '../../features/courses/data/repositories/course_repository_impl.dart';
 import '../../features/courses/domain/repositories/course_repository.dart';
+import '../../features/courses/domain/usecases/complete_lesson_usecase.dart';
 import '../../features/courses/domain/usecases/get_courses_usecase.dart';
+import '../../features/courses/presentation/bloc/course_bloc.dart';
+import '../../features/courses/presentation/bloc/course_details/course_details_bloc.dart';
 
 /// Global service locator instance.
 final sl = GetIt.instance;
@@ -96,5 +99,16 @@ void _initCoursesDependencies() {
   // Use Cases
   if (!sl.isRegistered<GetCoursesUseCase>()) {
     sl.registerLazySingleton(() => GetCoursesUseCase(sl()));
+  }
+  if (!sl.isRegistered<CompleteLessonUseCase>()) {
+    sl.registerLazySingleton(() => CompleteLessonUseCase());
+  }
+
+  // BLoC
+  if (!sl.isRegistered<CourseBloc>()) {
+    sl.registerFactory(() => CourseBloc(getCoursesUseCase: sl()));
+  }
+  if (!sl.isRegistered<CourseDetailsBloc>()) {
+    sl.registerFactory(() => CourseDetailsBloc(completeLessonUseCase: sl()));
   }
 }

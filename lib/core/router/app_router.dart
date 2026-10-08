@@ -4,6 +4,11 @@ import '../constants/route_constants.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../features/auth/presentation/bloc/auth_bloc.dart';
 import '../../features/auth/presentation/pages/login_page.dart';
+import '../../features/courses/domain/entities/course.dart';
+import '../../features/courses/presentation/bloc/course_bloc.dart';
+import '../../features/courses/presentation/bloc/course_details/course_details_bloc.dart';
+import '../../features/courses/presentation/pages/course_details_page.dart';
+import '../../features/courses/presentation/pages/dashboard_page.dart';
 import '../di/service_locator.dart';
 
 /// Centralized application router handling navigation and argument passing.
@@ -23,17 +28,26 @@ class AppRouter {
         );
       case AppRoutes.dashboard:
         return MaterialPageRoute<void>(
-          builder: (_) => const FoundationPlaceholderPage(
-            title: 'Course Dashboard (Foundation)',
-            message: 'Course Dashboard feature foundation is established.',
+          builder: (_) => BlocProvider(
+            create: (_) => sl<CourseBloc>(),
+            child: const DashboardPage(),
           ),
           settings: settings,
         );
       case AppRoutes.courseDetails:
-        return MaterialPageRoute<void>(
-          builder: (_) => const FoundationPlaceholderPage(
-            title: 'Course Details (Foundation)',
-            message: 'Course Details feature foundation is established.',
+        if (settings.arguments is! Course) {
+          return MaterialPageRoute<void>(
+            builder: (_) => const FoundationPlaceholderPage(
+              title: 'Error',
+              message: 'Course details route requires a Course argument.',
+            ),
+          );
+        }
+        final course = settings.arguments as Course;
+        return MaterialPageRoute<Course>(
+          builder: (_) => BlocProvider(
+            create: (_) => sl<CourseDetailsBloc>(),
+            child: CourseDetailsPage(course: course),
           ),
           settings: settings,
         );

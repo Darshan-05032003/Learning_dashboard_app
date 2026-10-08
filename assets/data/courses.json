@@ -3,21 +3,89 @@
     "id": 1,
     "title": "Python Programming",
     "instructor": "John Smith",
-    "progress": 65,
-    "lessons": 20
+    "lessons": 4,
+    "lessonItems": [
+      {
+        "id": 101,
+        "title": "Introduction",
+        "isCompleted": true
+      },
+      {
+        "id": 102,
+        "title": "Variables & Data Types",
+        "isCompleted": true
+      },
+      {
+        "id": 103,
+        "title": "Functions",
+        "isCompleted": false
+      },
+      {
+        "id": 104,
+        "title": "OOP",
+        "isCompleted": false
+      }
+    ]
   },
   {
     "id": 2,
     "title": "Generative AI",
     "instructor": "Sarah Williams",
-    "progress": 40,
-    "lessons": 16
+    "lessons": 5,
+    "lessonItems": [
+      {
+        "id": 201,
+        "title": "What is GenAI?",
+        "isCompleted": true
+      },
+      {
+        "id": 202,
+        "title": "LLMs Explained",
+        "isCompleted": true
+      },
+      {
+        "id": 203,
+        "title": "Prompt Engineering",
+        "isCompleted": false
+      },
+      {
+        "id": 204,
+        "title": "Embeddings",
+        "isCompleted": false
+      },
+      {
+        "id": 205,
+        "title": "Building Applications",
+        "isCompleted": false
+      }
+    ]
   },
   {
     "id": 3,
     "title": "Full Stack Development",
     "instructor": "David Brown",
-    "progress": 25,
-    "lessons": 28
+    "lessons": 4,
+    "lessonItems": [
+      {
+        "id": 301,
+        "title": "HTML/CSS Basics",
+        "isCompleted": true
+      },
+      {
+        "id": 302,
+        "title": "JavaScript Fundamentals",
+        "isCompleted": false
+      },
+      {
+        "id": 303,
+        "title": "React Frontend",
+        "isCompleted": false
+      },
+      {
+        "id": 304,
+        "title": "Node.js Backend",
+        "isCompleted": false
+      }
+    ]
   }
 ]

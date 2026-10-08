@@ -7,8 +7,8 @@ void main() {
     id: 1,
     title: 'Python Programming',
     instructor: 'John Smith',
-    progress: 65,
     lessons: 20,
+    lessonItems: [],
   );
 
   test('should be a subclass of Course entity', () {
@@ -21,8 +21,8 @@ void main() {
         'id': 1,
         'title': 'Python Programming',
         'instructor': 'John Smith',
-        'progress': 65,
         'lessons': 20,
+        'lessonItems': [],
       };
 
       final result = CourseModel.fromJson(jsonMap);
@@ -39,8 +39,8 @@ void main() {
         'id': 1,
         'title': 'Python Programming',
         'instructor': 'John Smith',
-        'progress': 65,
         'lessons': 20,
+        'lessonItems': [],
       };
 
       expect(result, equals(expectedMap));

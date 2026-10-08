@@ -21,8 +21,8 @@ void main() {
       id: 1,
       title: 'Python Programming',
       instructor: 'John Smith',
-      progress: 65,
       lessons: 20,
+      lessonItems: [],
     ),
   ];
 
