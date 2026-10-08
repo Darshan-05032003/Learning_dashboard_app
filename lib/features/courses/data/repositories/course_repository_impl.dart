@@ -19,15 +19,17 @@ class CourseRepositoryImpl implements CourseRepository {
   @override
   Future<Result<List<Course>>> getCourses() async {
     // Note: We are currently fetching mock data from local JSON.
-    // We intentionally bypass the `networkInfo.isConnected` check here because 
+    // We intentionally bypass the `networkInfo.isConnected` check here because
     // the local asset can be loaded without an active internet connection.
-    // In a real REST API implementation, we would check network status here 
+    // In a real REST API implementation, we would check network status here
     // and potentially fallback to a local cache data source.
     try {
       final courses = await remoteDataSource.fetchCourses();
       return Success(courses);
     } on ServerException catch (e) {
-      return FailureResult(ServerFailure(message: e.message, code: e.statusCode));
+      return FailureResult(
+        ServerFailure(message: e.message, code: e.statusCode),
+      );
     } catch (e) {
       return FailureResult(UnknownFailure(message: e.toString()));
     }

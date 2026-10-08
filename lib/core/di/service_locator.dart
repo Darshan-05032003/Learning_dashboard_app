@@ -9,6 +9,11 @@ import '../../features/auth/domain/repositories/auth_repository.dart';
 import '../../features/auth/domain/usecases/login_usecase.dart';
 import '../../features/auth/presentation/bloc/auth_bloc.dart';
 
+import '../../features/courses/data/datasources/course_remote_data_source.dart';
+import '../../features/courses/data/repositories/course_repository_impl.dart';
+import '../../features/courses/domain/repositories/course_repository.dart';
+import '../../features/courses/domain/usecases/get_courses_usecase.dart';
+
 /// Global service locator instance.
 final sl = GetIt.instance;
 
@@ -74,6 +79,22 @@ void _initAuthDependencies() {
 
 /// Registration placeholder for Courses feature dependencies.
 void _initCoursesDependencies() {
-  // Will register: CoursesRemoteDataSource, CoursesLocalDataSource,
-  // CoursesRepository, GetCoursesUseCase, UpdateLessonStatusUseCase, CoursesBloc
+  // Data Sources
+  if (!sl.isRegistered<CourseRemoteDataSource>()) {
+    sl.registerLazySingleton<CourseRemoteDataSource>(
+      () => MockCourseRemoteDataSourceImpl(),
+    );
+  }
+
+  // Repositories
+  if (!sl.isRegistered<CourseRepository>()) {
+    sl.registerLazySingleton<CourseRepository>(
+      () => CourseRepositoryImpl(remoteDataSource: sl(), networkInfo: sl()),
+    );
+  }
+
+  // Use Cases
+  if (!sl.isRegistered<GetCoursesUseCase>()) {
+    sl.registerLazySingleton(() => GetCoursesUseCase(sl()));
+  }
 }

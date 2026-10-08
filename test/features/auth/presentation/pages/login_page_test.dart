@@ -76,6 +76,5 @@ void main() {
       );
       expect(emailField.enabled, false);
     });
-
   });
 }
