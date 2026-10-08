@@ -1,103 +1,88 @@
-# Learning Dashboard Application
+# Learning Dashboard
 
-A highly robust, offline-first mobile application built with Flutter following Clean Architecture principles and SOLID design patterns. 
+## Overview
+A robust, offline-first mobile application built with Flutter following Clean Architecture principles. It demonstrates dynamic state management, local data caching, and separation of concerns using industry-standard design patterns.
 
-This repository was created as a submission for the **Senior Mobile App Developer – Technical Assignment**.
+## Tech Stack
+- **Flutter** & **Dart**
+- **BLoC** (`flutter_bloc`) for State Management
+- **Clean Architecture** (Feature-first)
+- **GetIt** for Dependency Injection
+- **SharedPreferences** for Offline Persistence
+- **Mocktail** & **bloc_test** for Testing
 
-## 📱 Features
-- **Authentication**: A mock login flow demonstrating form validation and state handling.
-- **Course Dashboard**: Fetches and displays a list of courses from a mock remote JSON.
-- **Course Details**: Displays in-depth course information and a paginated/scrollable list of lessons.
-- **Lesson Completion**: Allows marking lessons as completed, automatically calculating and updating course progress.
-- **Offline-First Architecture**: 
-  - On launch, the app attempts to fetch data from the remote source. 
-  - Successful remote fetches update a local SharedPreferences-based cache.
-  - If the network fails (offline), the app gracefully falls back to the cache, allowing the user to view courses and complete lessons uninterrupted.
-  - Lesson completions update both the domain models and the local cache in real-time.
+## Features
+- **Mock Login**: Form validation, simulated network latency, error handling, and loading states.
+- **Course Dashboard**: Fetches and lists courses from a mock remote JSON API.
+- **Course Details**: Displays dynamic progress, course metadata, and a list of lessons.
+- **Lesson Completion**: Users can mark lessons as complete, which instantly updates the overall course progress.
+- **Offline Cache**: Data is cached locally on fetch. If the network goes offline, the app seamlessly falls back to the local cache. Lesson completions are persisted offline.
+- **Error Handling**: Graceful failure management utilizing functional `Result`/`Failure` abstractions.
+- **Comprehensive Testing**: Contains 49 passing tests spanning unit, widget, and BLoC environments.
 
-## 🏗️ Architecture & Stack
-This project enforces a strict separation of concerns using **Feature-first Clean Architecture**:
+## Architecture
+```text
+Presentation (Widgets + BLoC)
+    ↓
+Domain (UseCases + Entities)
+    ↓
+Data (Repositories + Models)
+    ↓
+Remote / Local Data Sources
+```
+- **Presentation**: Handles UI and maps user events to state transitions.
+- **Domain**: Contains pure business logic and entity invariants (e.g., Progress calculation). Completely decoupled from Flutter.
+- **Data**: Orchestrates data flow, maps models to entities, and implements repository contracts.
+- **Data Sources**: Interacts with external services (APIs, Local DBs).
 
-- **Presentation Layer**: UI (Widgets & Pages) + State Management (BLoC / `flutter_bloc`).
-- **Domain Layer**: Core Business Logic (Entities & Use Cases) + Repository Interfaces. Independent of any external packages.
-- **Data Layer**: Data Transfer Objects (Models) + Data Sources (Remote/Local) + Repository Implementations. Maps models to pure domain entities.
-- **Core Layer**: Shared utilities, error handling (Failure & Result abstractions), Dependency Injection (`get_it`), Local Storage, and Network Info.
+## Offline Strategy
+The application follows a remote-first, cache-fallback strategy:
+```text
+Remote success
+      ↓
+Cache locally
+      ↓
+Return data
 
-**Key Tools:**
-- **State Management**: `flutter_bloc`, `equatable`
-- **Dependency Injection**: `get_it`
-- **Routing**: Flutter native `Navigator 2.0` (via `MaterialPageRoute`)
-- **Persistence**: `shared_preferences`
-- **Testing**: `flutter_test`, `bloc_test`, `mocktail`
+Remote failure
+      ↓
+Read local cache
+      ↓
+Return cached data
+```
+`SharedPreferences` is used for caching as the assignment requires simple local persistence without heavyweight database engines.
 
-## 🛠️ Testing Strategy
-The application features a robust test suite covering Domain, Data, Presentation, and Utility layers.
-- **Unit Tests**: Mocked dependencies using `mocktail` for BLoCs, UseCases, Repositories, and DataSources.
-- **Widget Tests**: Pumped widget structures checking for specific interactions (e.g., dispatching events on tap, validating login forms).
-- **Coverage**: Over **49 passing tests** ensuring the app's offline caching, network fallback, and state mutation are completely predictable.
+## Authentication
+Authentication is currently mocked for the purposes of the assignment. 
+In a production environment:
+- The mock data source would be replaced with an actual API endpoint (e.g., via `Dio`).
+- The authentication token would be securely stored using platform-backed keystores (e.g., `flutter_secure_storage`) rather than simple SharedPreferences.
 
-Run tests using:
+## Production Considerations
+- **Secure Token Storage**: Switch to `flutter_secure_storage`.
+- **Real API Integration**: Implement Retrofit/Dio for type-safe API requests.
+- **Pagination**: Implement cursor/offset pagination in `GetCoursesUseCase` as the course list scales.
+- **Scalable Database**: Migrate the `LocalStorage` underlying implementation to a robust relational/NoSQL solution like `Drift` (SQLite) or `Isar` if offline data volume grows significantly.
+
+## Testing
+The project maintains robust test coverage with **49 tests** all passing. Tests encompass offline repository fallbacks, entity calculations, BLoC state mutations, and UI widgets.
+
+## Demo Credentials
+Use the following credentials to bypass the mock login:
+**Email:** `demo@example.com`  
+**Password:** `password123`
+
+## Running the Project
 ```bash
-flutter test
+flutter pub get
+flutter run
 ```
 
-## 🚀 Getting Started
-
-### Prerequisites
-- Flutter SDK (3.24.x or higher)
-- Dart SDK (3.5.x or higher)
-
-### Installation
-1. Clone the repository
-2. Install dependencies:
-   ```bash
-   flutter pub get
-   ```
-3. Run code generation (if applicable) / Analyze code:
-   ```bash
-   flutter analyze
-   ```
-4. Run the app:
-   ```bash
-   flutter run
-   ```
-
-## 📂 Project Structure
-```
-lib/
-├── core/
-│   ├── constants/
-│   ├── di/                 # Dependency injection setup
-│   ├── error/              # Failure and Exception abstractions
-│   ├── network/            # Network connectivity abstractions
-│   ├── storage/            # Local storage abstractions
-│   ├── theme/              # Material 3 global app theme
-│   └── usecase/            # Base use case interface
-├── features/
-│   ├── auth/               # Authentication Feature
-│   │   ├── data/
-│   │   ├── domain/
-│   │   └── presentation/
-│   └── courses/            # Courses & Lessons Feature
-│       ├── data/           
-│       │   ├── datasources/# Remote (JSON) & Local (Cache)
-│       │   ├── models/     # DTOs
-│       │   └── repositories/
-│       ├── domain/
-│       │   ├── entities/   # Course, Lesson
-│       │   ├── repositories/
-│       │   └── usecases/   # GetCoursesUseCase, CompleteLessonUseCase
-│       └── presentation/
-│           ├── bloc/
-│           ├── pages/
-│           └── widgets/
-└── main.dart
+## Build
+To build the release APK for Android:
+```bash
+flutter build apk --release
 ```
 
-## 🧠 Key Design Decisions
-1. **Result/Failure Pattern**: Inspired by functional programming (Either/Result), the app handles errors explicitly via a `Result<T>` wrapper, avoiding unexpected exceptions propagating to the UI.
-2. **Immutable Domain Entities**: Entities like `Course` compute their own `progress` based on their `lessonItems`, preventing bugs where cached progress might desync from actual lesson completion states.
-3. **Local Storage Abstraction**: `SharedPreferences` is wrapped in a `LocalStorage` interface. This allows us to easily swap the underlying database (e.g., to Hive or SQLite) in the future without touching the repositories.
-
-## 📝 Documentation Notes
-You can find step-by-step implementation notes in the `doc/` directory, detailing the sequential rollout of features, BLoCs, and testing setups.
+## AI Usage Statement
+AI tools were utilized during development to rapidly scaffold boilerplate, generate tests, and brainstorm architectural patterns. However, the entire codebase was manually reviewed, modified, tested, and validated to ensure strict compliance with Clean Architecture and SOLID principles. The developer fully understands, owns, and can defend every line of implementation.
